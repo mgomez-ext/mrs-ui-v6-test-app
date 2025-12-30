@@ -11,7 +11,8 @@
  * - Mobile (<744px): Temporary drawer, simplified AppBar
  */
 
-import { useState, ReactNode } from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   Box,
   AppBar,
@@ -45,11 +46,10 @@ interface ResponsivePageLayoutProps {
  */
 function Logo({ variant = 'full' }: { variant?: 'full' | 'compact' }) {
   return (
-    <Box
-      component="img"
+    <img
       src={logoMiRedsalud}
       alt="MiREDSALUD"
-      sx={{
+      style={{
         height: variant === 'compact' ? 24 : 28,
         width: 'auto',
       }}
@@ -130,7 +130,6 @@ export function ResponsivePageLayout({
 
   // Breakpoint detection
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg')); // ≥1280px
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'lg')); // 600px - 1279px
   const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // <600px
 
   const handleDrawerToggle = () => {
