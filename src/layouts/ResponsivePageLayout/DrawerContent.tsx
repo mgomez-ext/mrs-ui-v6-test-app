@@ -66,17 +66,24 @@ function NavListItem({
         onClick={onClick}
         sx={{
           cursor: 'pointer',
-          borderRadius: 1,
-          mx: 1,
           bgcolor: selected ? 'primary._states.selected' : 'transparent',
-          '&:hover': {
-            bgcolor: selected ? 'primary._states.selected' : 'action.hover',
-          },
-          py: 1,
-          px: 2,
+          height: 48,
+          width: '100%',
+          py: 0,
+          px: 0,
+          my: 1,
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            width: '100%',
+            height: 'fit-content',
+            pl: 0,
+          }}
+        >
           <MaterialSymbol
             icon={item.icon}
             size="medium"
