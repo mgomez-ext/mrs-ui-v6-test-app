@@ -413,9 +413,9 @@ function App() {
               Weight Variants
             </Typography>
             <Stack direction="row" spacing={3} alignItems="center" sx={{ mb: 4, flexWrap: 'wrap' }}>
-              {[100, 200, 300, 400, 500, 600, 700].map((w) => (
+              {([100, 200, 300, 400, 500, 600, 700] as const).map((w) => (
                 <Box key={w} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                  <MaterialSymbol icon="home" size="large" weight={w as any} color="primary.main" />
+                  <MaterialSymbol icon="home" size="large" weight={w} color="primary.main" />
                   <Typography variant="caption">{w}</Typography>
                 </Box>
               ))}
