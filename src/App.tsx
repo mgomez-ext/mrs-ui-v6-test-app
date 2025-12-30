@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from '@mrs-uisystem/ui-v6';
+import { lightTheme, darkTheme } from '@mrs-uisystem/ui-v6';
 import {
-  Container,
   Box,
   Typography,
   Button,
@@ -16,199 +15,69 @@ import {
   IconButton,
   Tooltip,
   MaterialSymbol,
-  AppBar,
-  Toolbar,
-  Drawer,
-  List,
-  ListItem,
 } from '@mrs-uisystem/ui-v6';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { ResponsivePageLayout } from './layouts';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [count, setCount] = useState(0);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('proximas');
 
-  // Create theme based on mode
+  // Use the appropriate theme based on mode
   const currentTheme = useMemo(
-    () =>
-      createTheme({
-        ...theme,
-        palette: {
-          mode: darkMode ? 'dark' : 'light',
-          primary: {
-            main: '#00686f', // MRS verones color
-            dark: '#004e53',
-            contrastText: '#ffffff',
-          },
-          secondary: {
-            main: '#99cc00',
-            contrastText: '#000000de',
-          },
-          ...(darkMode
-            ? {
-                // Dark mode palette
-                background: {
-                  default: '#121212',
-                  paper: '#1e1e1e',
-                },
-                text: {
-                  primary: '#ffffff',
-                  secondary: 'rgba(255, 255, 255, 0.7)',
-                },
-              }
-            : {
-                // Light mode palette
-                background: {
-                  default: '#fafafa',
-                  paper: '#ffffff',
-                },
-                text: {
-                  primary: 'rgba(0, 0, 0, 0.87)',
-                  secondary: 'rgba(0, 0, 0, 0.6)',
-                },
-              }),
-        },
-        typography: {
-          fontFamily: '"Nunito", -apple-system, sans-serif',
-        },
-        shape: {
-          borderRadius: 12,
-        },
-        components: {
-          MuiButton: {
-            styleOverrides: {
-              root: {
-                borderRadius: 28,
-                textTransform: 'none',
-              },
-            },
-          },
-        },
-      }),
+    () => (darkMode ? darkTheme : lightTheme),
     [darkMode]
   );
 
-  const menuItems = [
-    { text: 'Home', icon: 'home' },
-    { text: 'Buttons', icon: 'smart_button' },
-    { text: 'Forms', icon: 'edit_note' },
-    { text: 'Feedback', icon: 'feedback' },
-    { text: 'Chips', icon: 'label' },
-    { text: 'Typography', icon: 'text_fields' },
-    { text: 'Icons', icon: 'stars' },
-    { text: 'Settings', icon: 'settings' },
+  // Tabs for the page header
+  const pageTabs = [
+    { id: 'proximas', label: 'PRÓXIMAS' },
+    { id: 'historial', label: 'HISTORIAL' },
   ];
 
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex' }}>
-        {/* AppBar */}
-        <AppBar position="fixed" color="primary">
-          <Toolbar>
+      
+      {/* Responsive Page Layout with Drawer from @mrs-uisystem/ui-v6 */}
+      <ResponsivePageLayout
+        pageTitle="Citas"
+        tabs={pageTabs}
+        activeTabId={activeTab}
+        onTabChange={setActiveTab}
+      >
+        {/* Theme Toggle - Floating */}
+        <Box sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1000 }}>
+          <Tooltip title={darkMode ? 'Light Mode' : 'Dark Mode'}>
             <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              onClick={() => setDrawerOpen(true)}
-              sx={{ mr: 2 }}
+              onClick={() => setDarkMode(!darkMode)}
+              color="primary"
+              sx={{
+                bgcolor: 'background.paper',
+                boxShadow: 4,
+                '&:hover': { bgcolor: 'action.hover' },
+              }}
             >
-              <MaterialSymbol icon="menu" color="inherit" />
+              {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              MRS UI v6 Test App
-            </Typography>
-            <Chip label="v0.7.0" size="small" sx={{ mr: 1, bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }} />
-            <Tooltip title={darkMode ? 'Light Mode' : 'Dark Mode'}>
-              <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
-                {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
-            </Tooltip>
-          </Toolbar>
-        </AppBar>
-
-        {/* Drawer */}
-        <Drawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-        >
-          <Box sx={{ width: 280, pt: 2 }}>
-            {/* Drawer Header */}
-            <Box sx={{ px: 2, pb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <MaterialSymbol icon="apps" size="large" color="primary.main" />
-                <Typography variant="h6" color="primary">
-                  MRS Menu
-                </Typography>
-              </Box>
-              <IconButton onClick={() => setDrawerOpen(false)} size="small">
-                <MaterialSymbol icon="close" size="small" />
-              </IconButton>
-            </Box>
-            <Divider />
-
-            {/* Navigation Menu */}
-            <List>
-              {menuItems.map((item) => (
-                <ListItem
-                  key={item.text}
-                  onClick={() => setDrawerOpen(false)}
-                  sx={{
-                    cursor: 'pointer',
-                    '&:hover': {
-                      bgcolor: 'action.hover',
-                    },
-                    py: 1.5,
-                    px: 2,
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-                    <MaterialSymbol icon={item.icon} color="primary.main" />
-                    <Typography variant="body1">{item.text}</Typography>
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* Drawer Footer */}
-            <Box sx={{ px: 2, pb: 2 }}>
-              <Alert severity="info" sx={{ fontSize: '0.875rem' }}>
-                Using @mrs-uisystem/ui-v6 components
-              </Alert>
-            </Box>
-          </Box>
-        </Drawer>
+          </Tooltip>
+        </Box>
 
         {/* Main Content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-          <Container maxWidth="lg">
-            {/* Header */}
-            <Box sx={{ mb: 6, textAlign: 'center' }}>
-              <Typography variant="h2" component="h1" gutterBottom>
-                MRS UI v6 Component Showcase
-              </Typography>
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                Testing @mrs-uisystem/ui-v6@0.7.0 in {darkMode ? 'Dark' : 'Light'} Mode
-              </Typography>
-              <Stack direction="row" spacing={1} justifyContent="center" sx={{ mt: 2 }}>
-                <Chip label="54 Components" color="primary" size="small" />
-                <Chip label="Material Symbols" color="secondary" size="small" />
-                <Chip label="Figma Code Connect" color="success" size="small" />
-                <Chip
-                  label={darkMode ? '🌙 Dark Mode' : '☀️ Light Mode'}
-                  color={darkMode ? 'default' : 'warning'}
-                  size="small"
-                />
-              </Stack>
-            </Box>
-
         <Stack spacing={4}>
+          {/* Tab Content Display */}
+          <Paper elevation={0} sx={{ p: 3, bgcolor: 'background.default' }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              {activeTab === 'proximas' ? 'Próximas Citas' : 'Historial de Citas'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Vista activa: {activeTab.toUpperCase()}
+            </Typography>
+          </Paper>
+
           {/* Buttons Section */}
           <Paper elevation={2} sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
@@ -280,16 +149,64 @@ function App() {
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Stack spacing={2}>
-              <Alert severity="success">
+              <Alert 
+                severity="success"
+                sx={{
+                  maxWidth: 500,
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  verticalAlign: 'middle',
+                }}
+              >
                 Success! MRS components are working perfectly!
               </Alert>
-              <Alert severity="info">
+              <Alert 
+                severity="info"
+                sx={{
+                  maxWidth: 500,
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  verticalAlign: 'middle',
+                }}
+              >
                 All components from @mrs-uisystem/ui-v6 package
               </Alert>
-              <Alert severity="warning">
+              <Alert 
+                severity="warning"
+                sx={{
+                  maxWidth: 500,
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  verticalAlign: 'middle',
+                }}
+              >
                 Using Nunito font and MRS design tokens
               </Alert>
-              <Alert severity="error">
+              <Alert 
+                severity="error"
+                sx={{
+                  maxWidth: 500,
+                  fontSize: '16px',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  verticalAlign: 'middle',
+                }}
+              >
                 This is a demo error alert
               </Alert>
             </Stack>
@@ -366,7 +283,7 @@ function App() {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Fill Variants (Outlined vs Filled)
             </Typography>
-            <Stack direction="row" spacing={4} sx={{ mb: 4 }}>
+            <Stack direction="row" spacing={4} sx={{ mb: 4, flexWrap: 'wrap' }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                 <MaterialSymbol icon="favorite" size="large" fill={0} color="error.main" />
                 <Typography variant="caption">Outlined (fill=0)</Typography>
@@ -389,7 +306,7 @@ function App() {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Size Scales
             </Typography>
-            <Stack direction="row" spacing={4} alignItems="center" sx={{ mb: 4 }}>
+            <Stack direction="row" spacing={4} alignItems="center" sx={{ mb: 4, flexWrap: 'wrap' }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                 <MaterialSymbol icon="settings" size="small" color="primary.main" />
                 <Typography variant="caption">Small (20px)</Typography>
@@ -425,7 +342,7 @@ function App() {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Grade Variants (Visual Weight)
             </Typography>
-            <Stack direction="row" spacing={3} alignItems="center" sx={{ mb: 4 }}>
+            <Stack direction="row" spacing={3} alignItems="center" sx={{ mb: 4, flexWrap: 'wrap' }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                 <MaterialSymbol icon="star" size="large" grade={-50} fill={1} color="warning.main" />
                 <Typography variant="caption">Grade -50</Typography>
@@ -492,9 +409,7 @@ function App() {
             </Typography>
           </Box>
         </Stack>
-          </Container>
-        </Box>
-      </Box>
+      </ResponsivePageLayout>
     </ThemeProvider>
   );
 }
